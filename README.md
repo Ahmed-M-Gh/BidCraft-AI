@@ -73,6 +73,6 @@ uvicorn src.main:app --reload --port 5000 --host 0.0.0.0
 ## 👤 Author
 **Ahmed Ghoneim**
 
-> GenAI Engineer & System Architect
+> GenAI Engineer
 
 [LinkedIn](https://www.linkedin.com/in/ahmed-ghoneim-3450892b7) • [Portfolio](https://portfolio-xi-nine-iekbhuzjyy.vercel.app/)
