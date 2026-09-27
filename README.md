@@ -69,6 +69,9 @@ uvicorn src.main:app --reload --port 5000 --host 0.0.0.0
 ```
 - after that go to [http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs) for swagger interface
 
+## Endpoints
+> Base Endpoint : [http://127.0.0.1:5000/api/v1.0](http://127.0.0.1:5000/api/v1.0)
+
 
 ## 👤 Author
 **Ahmed Ghoneim**
