@@ -41,20 +41,37 @@ Writing technical proposals and responding to tenders (RFPs) is a massive bottle
 - Python 3.10 or higher
 
 **Installation :**
-- 1. clone the repository:
+1. clone the repository:
 ```text
 git clone [https://github.com/Ahmed-M-Gh/BidCraft-AI.git](https://github.com/Ahmed-M-Gh/BidCraft-AI.git)
 cd bidcraft-ai
 ```
 
-- 2. Install Dependencies:
+2. create python environment
 ```text
+python -m venv env-name
+``` 
+
+3. Activate environment :
+```text
+env-name\Scripts\activate
+```
+
+4. update pip & Install Dependencies:
+```text
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+5. Run the app:
+```text
+uvicorn src.main:app --reload --port 5000 --host 0.0.0.0
+```
+
 
 ## 👤 Author
 **Ahmed Ghoneim**
 
-- GenAI Engineer & System Architect
+> GenAI Engineer & System Architect
 
 [LinkedIn](https://www.linkedin.com/in/ahmed-ghoneim-3450892b7) • [Portfolio](https://portfolio-xi-nine-iekbhuzjyy.vercel.app/)
