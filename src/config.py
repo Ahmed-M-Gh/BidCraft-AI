@@ -8,6 +8,16 @@ class Settings(BaseSettings):
     APP_NAME : str
     APP_VERSION:str
     
+    # Reading files settings
+    TEMP_DIR :str = BASE_DIR/"temp_uploads"
+    PARTITION_STRATEGY:str = "hi_res"
+    
+    # Embeddings
+    EMBEDDING_MODEL:str = "BAAI/bge-large-en-v1.5"
+    # Chroma DB
+    CHROMA_DB_FOLDER : str = BASE_DIR/"asset/chroma_db"
+    COLLECTION_NAME:str = "company_knowledge_base"
+    
     
     # .env file
     model_config = SettingsConfigDict(
