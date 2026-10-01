@@ -72,6 +72,7 @@ uvicorn src.main:app --reload --port 5000 --host 0.0.0.0
 ## Endpoints
 > Base Endpoint : [http://127.0.0.1:5000/api/v1.0](http://127.0.0.1:5000/api/v1.0)
 
+> process Company Base Knowledge : [http://127.0.0.1:5000/api/v1.0/documents/process-company-knowledge](http://127.0.0.1:5000/api/v1.0/documents/process-company-knowledge)
 
 ## 👤 Author
 **Ahmed Ghoneim**
