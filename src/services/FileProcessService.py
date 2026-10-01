@@ -155,43 +155,58 @@ class FileProcess:
         """
         Take chunks and embedding it 
         """
+        if not chunks:
+            return []
+        
+        texts = [chunk.get("content") for chunk in chunks]
+        
+        logger.info(f"Generating embeddings for {len(texts)} chunks...")
+        
+        # convert chunks to vectors
+        vectors = self.embedding_model.encode(texts).tolist()
         
         processed_chunks = []
-        
-        for chunk in chunks:
-            text_content = chunk.get("content")
-            
-            vector = self.embedding_model.encode([text_content])
-            
+        for chunk, vector in zip(chunks, vectors):
             chunk_with_embedding = chunk.copy()
             chunk_with_embedding["embedding"] = vector
-            
             processed_chunks.append(chunk_with_embedding)
-            
+        
         return processed_chunks
+
         
     def vectorize_and_store(self, chunks: List[dict]) -> str:
         """
         Takes the text embeddings, and stores the in chromadb.
         Returns the name of the collection used.
         """
-
+        embedding_chunks = self.generate_embeddings(chunks)
+        if not embedding_chunks:
+            logger.warning(f"No Chunks to store.")
+            return self.settings.COLLECTION_NAME
+        
         collection = self.chroma_client.get_or_create_collection(name=self.settings.COLLECTION_NAME)
         
         ids = []
         documents = []
-        metadata = []
+        metadatas = []
+        embeddings = []
         
-        for i, chunk in enumerate(chunks):
+        for i, chunk in enumerate(embedding_chunks):
             chunk_id = f"{chunk["metadata"].get('file_name', 'unknown')}_chunk{i}_{uuid.uuid4().hex[:8]}"
+            
             ids.append(chunk_id)
             documents.append(chunk["content"])
-            metadata.append(chunk["metadata"])
+            metadatas.append(chunk["metadata"])
+            embeddings.append(chunk["embedding"])
             
         if documents:
             logger.info(f"Storing {len(documents)} chunks in ChromaDB collection: {self.settings.COLLECTION_NAME}")
             collection.add(
                 ids=ids,
                 documents=documents,
-                metadata=metadata
+                metadatas=metadatas,
+                embeddings=embeddings
             )
+            
+        return self.settings.COLLECTION_NAME
+    

@@ -9,13 +9,13 @@ class Settings(BaseSettings):
     APP_VERSION:str
     
     # Reading files settings
-    TEMP_DIR :str = BASE_DIR/"temp_uploads"
+    TEMP_DIR : Path = Path(__file__).resolve().parent.parent/"temp_uploads"
     PARTITION_STRATEGY:str = "hi_res"
     
     # Embeddings
     EMBEDDING_MODEL:str = "BAAI/bge-large-en-v1.5"
     # Chroma DB
-    CHROMA_DB_FOLDER : str = BASE_DIR/"asset/chroma_db"
+    CHROMA_DB_FOLDER : Path = Path(__file__).resolve().parent.parent/"asset"/"chroma_db"
     COLLECTION_NAME:str = "company_knowledge_base"
     
     

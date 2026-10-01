@@ -221,3 +221,6 @@ __marimo__/
 
 # Virtual environment
 bidcraft-venv
+/asset
+/temp_uploads
+temp.txt
