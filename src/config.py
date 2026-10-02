@@ -10,7 +10,9 @@ class Settings(BaseSettings):
     
     # Reading files settings
     TEMP_DIR : Path = Path(__file__).resolve().parent.parent/"temp_uploads"
-    PARTITION_STRATEGY:str = "hi_res"
+    PARTITION_STRATEGY:str = "fast"
+    BATCH_SIZE:int = 4
+    DB_BATCH_SIZE:int = 250
     
     # Embeddings
     EMBEDDING_MODEL:str = "BAAI/bge-large-en-v1.5"

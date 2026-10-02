@@ -5,6 +5,8 @@ from src.services import FileProcess
 import logging
 logger = logging.getLogger(__name__)
 from collections import Counter
+from src.config import get_settings
+settings = get_settings()
 
 reader_router = APIRouter(
     prefix="/api/v1.0/documents",
@@ -45,7 +47,7 @@ async def process_contracts(background_tasks:BackgroundTasks, request:List[Uploa
             logger.error("Failed to chunk")
             raise HTTPException(status_code=422, detail="No Valid chunks generated.")
             
-        collection_name = processor.vectorize_and_store(chunks)
+        collection_name = processor.vectorize_and_store(chunks, db_batch_size=settings.DB_BATCH_SIZE)
         
         # cleaning temporarily file_paths in Background
         background_tasks.add_task(processor.cleanup_temp_files, saved_paths)

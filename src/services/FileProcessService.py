@@ -1,5 +1,5 @@
 import os 
-from src.config import get_settings, Settings
+from src.config import get_settings
 from typing import List
 from fastapi import UploadFile
 from pathlib import Path
@@ -151,7 +151,7 @@ class FileProcess:
         logger.info(f"Total chunks created from all documents: {len(all_chunks)}")
         return all_chunks
     
-    def generate_embeddings(self, chunks: List[dict]) -> List[dict]:
+    def generate_embeddings(self, chunks: List[dict], batch_size:int) -> List[dict]:
         """
         Take chunks and embedding it 
         """
@@ -159,27 +159,31 @@ class FileProcess:
             return []
         
         texts = [chunk.get("content") for chunk in chunks]
-        
-        logger.info(f"Generating embeddings for {len(texts)} chunks...")
+        logger.info(f"Generating embeddings for {len(texts)} chunks in batches of {batch_size}...")
         
         # convert chunks to vectors
-        vectors = self.embedding_model.encode(texts).tolist()
+        vectors = []
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i : i+batch_size]
+            
+            batch_vectors = self.embedding_model.encode(batch_texts).tolist()
+            vectors.extend(batch_vectors)
         
         processed_chunks = []
         for chunk, vector in zip(chunks, vectors):
             chunk_with_embedding = chunk.copy()
             chunk_with_embedding["embedding"] = vector
             processed_chunks.append(chunk_with_embedding)
-        
+            
         return processed_chunks
 
         
-    def vectorize_and_store(self, chunks: List[dict]) -> str:
+    def vectorize_and_store(self, chunks: List[dict], db_batch_size:int) -> str:
         """
         Takes the text embeddings, and stores the in chromadb.
         Returns the name of the collection used.
         """
-        embedding_chunks = self.generate_embeddings(chunks)
+        embedding_chunks = self.generate_embeddings(chunks, batch_size=self.settings.BATCH_SIZE)
         if not embedding_chunks:
             logger.warning(f"No Chunks to store.")
             return self.settings.COLLECTION_NAME
@@ -192,21 +196,29 @@ class FileProcess:
         embeddings = []
         
         for i, chunk in enumerate(embedding_chunks):
-            chunk_id = f"{chunk["metadata"].get('file_name', 'unknown')}_chunk{i}_{uuid.uuid4().hex[:8]}"
+            file_name = chunk["metadata"].get('file_name', 'unknown')
+            chunk_id = f"{file_name}_chunk{i}_{uuid.uuid4().hex[:8]}"
             
             ids.append(chunk_id)
             documents.append(chunk["content"])
             metadatas.append(chunk["metadata"])
             embeddings.append(chunk["embedding"])
-            
+        
         if documents:
             logger.info(f"Storing {len(documents)} chunks in ChromaDB collection: {self.settings.COLLECTION_NAME}")
-            collection.add(
-                ids=ids,
-                documents=documents,
-                metadatas=metadatas,
-                embeddings=embeddings
-            )
+            
+            for i in range(0, len(ids), db_batch_size):
+                batch_ids = ids[i:i + db_batch_size]
+                batch_documents = documents[i:i+db_batch_size]
+                batch_metadatas = metadatas[i:i+db_batch_size]
+                batch_embeddings = embeddings[i:i+db_batch_size]
+            
+                collection.add(
+                    ids=batch_ids,
+                    documents=batch_documents,
+                    metadatas=batch_metadatas,
+                    embeddings=batch_embeddings
+                )
             
         return self.settings.COLLECTION_NAME
     
