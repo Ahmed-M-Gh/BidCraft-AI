@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Form
 from typing import List
 from src.schema import FileProcessResponse, FileDetail
 from src.services import FileProcess
@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 from collections import Counter
 from src.config import get_settings
 settings = get_settings()
+from src.schema import RFPReaderResponse, RetrievedEvidence
 
 reader_router = APIRouter(
     prefix="/api/v1.0/documents",
@@ -84,3 +85,11 @@ async def process_contracts(background_tasks:BackgroundTasks, request:List[Uploa
         if saved_paths:
             processor.cleanup_temp_files(saved_paths)
         raise HTTPException(status_code=500, detail=str(e))
+    
+@reader_router.post("/rfp_file", response_model=RFPReaderResponse)
+async def rfp_handler(
+    file:UploadFile = File(...),
+    client_name:str = Form(...),
+    tone:str = Form(default="formal")
+    ):
+    pass
