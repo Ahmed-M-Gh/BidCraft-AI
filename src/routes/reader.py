@@ -89,10 +89,30 @@ async def process_contracts(background_tasks:BackgroundTasks, request:List[Uploa
             processor.cleanup_temp_files(saved_paths)
         raise HTTPException(status_code=500, detail=str(e))
     
-@reader_router.post("/rfp_file", response_model=RFPReaderResponse)
+@reader_router.post("/rfp-file", response_model=RFPReaderResponse)
 async def rfp_handler(
     file:UploadFile = File(...),
     client_name:str = Form(...),
     tone:str = Form(default="formal")
     ):
-    pass
+    """
+    Endpoint to process incoming RFP files, search company knowledge base,
+    and generate a structured proposal draft with evidence.
+    """
+    
+    if not file:
+        raise HTTPException(status=400, detail="NO RFP FILE PROVIDED.")
+    
+    try:
+        service = RFPService()
+        response_data = service.process_rfp_and_retrieved(
+            file=file,
+            client_name=client_name,
+            tone=tone
+        )
+        
+        return response_data
+    
+    except Exception as e:
+        logger.error(f"Error in rfp_handler: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,4 @@
-from config import get_settings
+from src.config import get_settings
 from pathlib import Path
 from .get_clients import get_chroma_client, get_embedding_model
 from fastapi import UploadFile
