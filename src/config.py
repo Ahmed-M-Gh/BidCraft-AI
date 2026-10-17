@@ -20,7 +20,11 @@ class Settings(BaseSettings):
     CHROMA_DB_FOLDER : Path = Path(__file__).resolve().parent.parent/"asset"/"chroma_db"
     COLLECTION_NAME:str = "company_knowledge_base"
     
-    
+    # Our LLM API
+    GROQ_API_KEY:str
+    GROQ_MODEL_NAME:str
+    TEMPERATURE:float=0.3
+
     # .env file
     model_config = SettingsConfigDict(
         env_file=BASE_DIR/".env",
