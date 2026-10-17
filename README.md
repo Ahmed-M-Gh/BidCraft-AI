@@ -74,6 +74,8 @@ uvicorn src.main:app --reload --port 5000 --host 0.0.0.0
 
 > process Company Base Knowledge : [http://127.0.0.1:5000/api/v1.0/documents/process-company-knowledge](http://127.0.0.1:5000/api/v1.0/documents/process-company-knowledge)
 
+> Read RFP And Generate Proposal : [http://127.0.0.1:5000/api/v1.0/documents/rfp-file](http://127.0.0.1:5000/api/v1.0/documents/rfp-file)
+
 ## 👤 Author
 **Ahmed Ghoneim**
 
