@@ -1,13 +1,16 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Form
 from typing import List
-from src.schema import FileProcessResponse, FileDetail
-from src.services import FileProcess
+from src.schema import (
+    FileProcessResponse,
+    FileDetail,
+    RFPReaderResponse)
+from src.services import FileProcess, RFPService
 import logging
 logger = logging.getLogger(__name__)
 from collections import Counter
 from src.config import get_settings
 settings = get_settings()
-from src.schema import RFPReaderResponse, RetrievedEvidence
+
 
 reader_router = APIRouter(
     prefix="/api/v1.0/documents",
